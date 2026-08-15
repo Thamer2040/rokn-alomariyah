@@ -226,6 +226,7 @@ function filterCategory(category) {
 /* ربط أحداث النقر على روابط التنقل العلوي */
 navLinks.forEach(function (link) {
     link.addEventListener('click', function (e) {
+        if (!link.dataset.category) return;
         e.preventDefault();
         filterCategory(link.dataset.category);
         productsGrid.scrollIntoView({ behavior: 'smooth' });
@@ -313,7 +314,7 @@ function renderProducts(list) {
         var img = document.createElement('img');
         img.src = product.image || '';
         img.alt = product.name || '';
-        img.loading = 'eager';
+        img.loading = 'lazy';
         img.decoding = 'async';
         img.className = 'product-image w-full h-full rounded-xl';
         imageWrapper.appendChild(img);
