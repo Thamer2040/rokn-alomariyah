@@ -3,6 +3,10 @@
    بديل عن Tailwind Play CDN لأغراض الأمان والأداء
    ========================================================= */
 
+html {
+    scroll-behavior: smooth;
+}
+
 *,
 ::before,
 ::after {
