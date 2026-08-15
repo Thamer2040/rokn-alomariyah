@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <title>ركن العمارية</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="app.js" defer></script>
+</head>
+
+<body>
+
+<!-- =========================================================
+     HEADER - تنقل متجر كامل
+     ========================================================= -->
+<header class="store-header sticky top-0 z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4">
+
+        <!-- الصف العلوي: الشعار + بحث + أيقونات -->
+        <div class="flex flex-col lg:flex-row items-center justify-between gap-4 py-3">
+
+            <!-- اسم المتجر فقط -->
+            <div class="logo-area flex-shrink-0">
+                <a href="#" class="flex items-center gap-3" aria-label="الرئيسية">
+                    <div>
+                        <div class="store-title">ركن العمارية</div>
+                        <div class="store-subtitle">للمجمدات والمواد الغذائية</div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- البحث -->
+            <div class="search-box w-full lg:w-1/2 lg:mx-auto">
+                <input
+                    id="searchInput"
+                    type="text"
+                    placeholder="ابحث عن منتج... (مثلاً: دجاج، بطاطس، بيبسي)"
+                    autocomplete="off"
+                    aria-label="البحث عن منتجات"
+                >
+            </div>
+
+            <!-- أيقونات: سلة + وضع ليلي + قائمة -->
+            <div class="header-actions flex-shrink-0">
+                <!-- السلة -->
+                <div class="relative">
+                    <button id="cartButton" class="icon-btn" aria-label="سلة المشتريات">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="9" cy="21" r="1"></circle>
+                            <circle cx="20" cy="21" r="1"></circle>
+                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                        </svg>
+                        <span class="cart-count" id="cartCount">0</span>
+                    </button>
+                </div>
+
+                <!-- الوضع الليلي للجوال -->
+                <label class="icon-btn lg:hidden" aria-label="الوضع الليلي">
+                    <input type="checkbox" id="themeToggleMobile" class="sr-only">
+                    <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                    <svg class="moon-icon hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                </label>
+
+                <!-- الوضع الليلي للسطح المكتب -->
+                <label class="hidden lg:flex items-center gap-2 cursor-pointer" aria-label="الوضع الليلي">
+                    <input type="checkbox" id="themeToggle" class="sr-only">
+                    <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                    <svg class="moon-icon hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <span class="text-sm font-medium text-white hidden sm:inline">الوضع الليلي</span>
+                </label>
+            </div>
+        </div>
+
+        <!-- قائمة التنقل الرئيسية -->
+        <nav class="nav-menu border-t border-blue-900" aria-label="أقسام المتجر">
+            <div class="flex flex-wrap gap-2 py-2 px-2 overflow-x-auto scrollbar-hide">
+                <a href="#" class="nav-link" data-category="الكل">الرئيسية</a>
+                <a href="#" class="nav-link" data-category="دجاج">دجاج</a>
+                <a href="#" class="nav-link" data-category="لحوم">لحوم</a>
+                <a href="#" class="nav-link" data-category="بحريات">بحريات</a>
+                <a href="#" class="nav-link" data-category="بطاطس ومقبلات">بطاطس ومقبلات</a>
+                <a href="#" class="nav-link" data-category="خضار وفواكه">خضار وفواكه</a>
+                <a href="#" class="nav-link" data-category="معجنات">معجنات</a>
+                <a href="#" class="nav-link" data-category="مواد غذائية">مواد غذائية</a>
+                <a href="#" class="nav-link" data-category="مشروبات">مشروبات</a>
+            </div>
+        </nav>
+    </div>
+</header>
+
+
+<!-- =========================================================
+     INTRO
+     ========================================================= -->
+<section class="bg-white border-b transition-colors duration-200">
+
+    <div class="max-w-7xl mx-auto px-4 py-8">
+
+        <h2 class="text-2xl sm:text-3xl font-bold mb-2">
+            منتجات المجمدات للمطاعم
+        </h2>
+
+        <p class="text-gray-500 text-sm sm:text-base">
+            تشكيلة واسعة من المنتجات المجمدة والمواد الغذائية
+            المناسبة للمطاعم والمطابخ والكافيهات.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     CATEGORIES
+     ========================================================= -->
+<section class="max-w-7xl mx-auto px-4 py-6">
+
+    <div
+        id="categories"
+        class="flex flex-nowrap overflow-x-auto
+               pb-2 sm:flex-wrap sm:pb-0 gap-2 scrollbar-hide"
+    >
+
+        <button
+            data-category="الكل"
+            class="category-btn category-active
+                   px-4 py-2 rounded-full border
+                   bg-white whitespace-nowrap
+                   transition-colors"
+        >
+            الكل
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     CONTROLS
+     ========================================================= -->
+<section class="max-w-7xl mx-auto px-4 pb-4">
+
+    <div
+        class="flex flex-col sm:flex-row
+               justify-between items-center gap-3"
+    >
+
+        <div
+            id="resultCount"
+            class="text-gray-500 text-sm sm:text-base
+                   w-full sm:w-auto text-right"
+        ></div>
+
+        <select
+            id="sortSelect"
+            class="w-full sm:w-auto
+                   border rounded-lg px-4 py-2
+                   bg-white outline-none
+                   focus:ring-2 focus:ring-blue-300
+                   transition-colors"
+        >
+            <option value="default">الترتيب الافتراضي</option>
+            <option value="name">الاسم</option>
+            <option value="priceLow">السعر من الأقل</option>
+            <option value="priceHigh">السعر من الأعلى</option>
+        </select>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     PRODUCTS
+     ========================================================= -->
+<main class="max-w-7xl mx-auto px-4 pb-16">
+
+    <div
+        id="productsGrid"
+        class="grid grid-cols-2 sm:grid-cols-3
+               md:grid-cols-3 lg:grid-cols-4 gap-4"
+    ></div>
+
+    <div
+        id="noResults"
+        class="hidden text-center py-20
+               text-gray-500 text-xl"
+    >
+        لم يتم العثور على المنتج.
+    </div>
+
+</main>
+
+</body>
+</html>

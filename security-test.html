@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فحص أمني محلي - ركن العمارية</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body style="padding: 20px; font-family: Tahoma, Arial, sans-serif;">
+
+    <h2 style="margin-bottom: 12px;">بيئة فحص الهجمات (نسخة محلية - ليست منشورة)</h2>
+    <p style="margin-bottom: 20px; color: #6b7280;">
+        هذه الصفحة تحمّل app.js الحقيقي وتهاجم منطقه بمحمولات ضارة
+        (حقن XSS في السلة، تلاعب بالأسعار والكميات، معرفات وهمية)
+        للتحقق من أن الدفاعات تصمد. افتحها في المتصفح وشاهد النتائج.
+    </p>
+
+    <!-- الحد الأدنى من عناصر DOM التي يحتاجها app.js عند التحميل -->
+    <div id="resultCount"></div>
+    <main>
+        <div id="productsGrid"></div>
+        <div id="noResults" class="hidden">لا نتائج</div>
+    </main>
+    <input id="searchInput" type="text">
+    <select id="sortSelect"><option value="default">الترتيب الافتراضي</option></select>
+    <nav class="nav-menu"><div></div></nav>
+    <div id="categories"><button class="category-btn category-active" data-category="الكل">الكل</button></div>
+    <div class="relative">
+        <button id="cartButton">السلة</button>
+        <span id="cartCount">0</span>
+    </div>
+
+    <!-- منطقة النتائج -->
+    <div id="testResults" style="margin-top: 24px; direction: rtl;"></div>
+
+    <script src="app.js"></script>
+    <script src="security-tests.js"></script>
+</body>
+</html>
