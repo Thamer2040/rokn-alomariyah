@@ -313,7 +313,7 @@ function renderProducts(list) {
         var img = document.createElement('img');
         img.src = product.image || '';
         img.alt = product.name || '';
-        img.loading = 'lazy';
+        img.loading = 'eager';
         img.decoding = 'async';
         img.className = 'product-image w-full h-full rounded-xl';
         imageWrapper.appendChild(img);
