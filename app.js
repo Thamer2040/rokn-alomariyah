@@ -10,7 +10,21 @@
    ========================================================= */
 
 var CONFIG = {
-    WA_PHONE: '966553108707'
+    WA_PHONE: '966553108707',
+    BRANCHES: [
+        'الفرع الرئيسي',
+        'السادة',
+        'الأفق',
+        'الرس',
+        'المدينة المنورة'
+    ],
+    BRANCH_PHONES: {
+        'الفرع الرئيسي': '966553108707',
+        'السادة': '966553108707',
+        'الأفق': '966553108707',
+        'الرس': '966553108707',
+        'المدينة المنورة': '966553108707'
+    }
 };
 
 /* =========================================================
@@ -45,11 +59,18 @@ var moonIcons = document.querySelectorAll('.moon-icon');
 
 function updateThemeIcons(isDark) {
     sunIcons.forEach(function (icon) {
-        icon.classList.toggle('hidden', isDark);
-    });
-    moonIcons.forEach(function (icon) {
         icon.classList.toggle('hidden', !isDark);
     });
+    moonIcons.forEach(function (icon) {
+        icon.classList.toggle('hidden', isDark);
+    });
+
+    var activeThemeLabel = themeToggle ? themeToggle.closest('label') : null;
+    if (activeThemeLabel) {
+        var label = isDark ? 'تفعيل الوضع الفاتح' : 'تفعيل الوضع الليلي';
+        activeThemeLabel.setAttribute('aria-label', label);
+        activeThemeLabel.setAttribute('title', label);
+    }
 }
 
 function updateTheme(isDark) {
@@ -89,19 +110,23 @@ if (themeToggleMobile) {
 
 function productImage(name, category) {
     var colors = {
-        'دجاج': 'eaf2ff/1e40af',
-        'لحوم': 'fef2f2/991b1b',
-        'بحريات': 'eff6ff/1e3a8a',
-        'بطاطس ومقبلات': 'fff7ed/9a3412',
-        'خضار وفواكه': 'f0fdf4/166534',
-        'معجنات': 'fff7ed/9a3412',
-        'حلويات': 'fdf2f8/9d174d',
-        'مواد غذائية': 'f8fafc/334155',
-        'مشروبات': 'eff6ff/1e40af'
+        'دجاج': ['#eaf2ff', '#1e40af'],
+        'لحوم': ['#fef2f2', '#991b1b'],
+        'بحريات': ['#eff6ff', '#1e3a8a'],
+        'بطاطس ومقبلات': ['#fff7ed', '#9a3412'],
+        'خضار وفواكه': ['#f0fdf4', '#166534'],
+        'معجنات': ['#fff7ed', '#9a3412'],
+        'حلويات': ['#fdf2f8', '#9d174d'],
+        'مواد غذائية': ['#f8fafc', '#334155'],
+        'مشروبات': ['#eff6ff', '#1e40af']
     };
 
-    var color = colors[category] || 'f8fafc/334155';
-    return 'https://placehold.co/600x450/' + color + '?text=' + encodeURIComponent(name);
+    var color = colors[category] || ['#f8fafc', '#334155'];
+    var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="600" height="450" viewBox="0 0 600 450">' +
+        '<rect width="600" height="450" fill="' + color[0] + '"/>' +
+        '<text x="300" y="225" text-anchor="middle" dominant-baseline="middle" fill="' + color[1] + '" font-family="Tahoma,Arial" font-size="30" font-weight="700">' +
+        String(name || 'صورة المنتج').replace(/[&<>]/g, '') + '</text></svg>';
+    return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
 }
 
 /* =========================================================
@@ -183,6 +208,7 @@ products.forEach(function (product) {
    ========================================================= */
 
 var productsGrid = document.getElementById('productsGrid');
+var productsSection = document.getElementById('productsNew');
 var searchInput = document.getElementById('searchInput');
 var categories = document.getElementById('categories');
 var resultCount = document.getElementById('resultCount');
@@ -197,6 +223,18 @@ var categoryList = [
     'معجنات', 'حلويات', 'مواد غذائية', 'مشروبات'
 ];
 
+var categoryPriority = {
+    'دجاج': 1,
+    'لحوم': 2,
+    'بحريات': 3,
+    'بطاطس ومقبلات': 4,
+    'خضار وفواكه': 5,
+    'معجنات': 6,
+    'حلويات': 7,
+    'مواد غذائية': 8,
+    'مشروبات': 9
+};
+
 /* تحديث حالة الروابط في القائمة العلوية */
 function updateNavLinks(category) {
     navLinks.forEach(function (link) {
@@ -209,7 +247,7 @@ function updateNavLinks(category) {
 }
 
 /* تصفية حسب الفئة (بمقارنة مباشرة، بلا إنشاء محددات من قيم) */
-function filterCategory(category) {
+function filterCategory(category, keepProductsNavActive) {
     currentCategory = category;
 
     document.querySelectorAll('.category-btn').forEach(function (button) {
@@ -219,30 +257,33 @@ function filterCategory(category) {
         }
     });
 
-    updateNavLinks(category);
+    if (!keepProductsNavActive) updateNavLinks(null);
     applyFilters();
 }
 
 /* ربط أحداث النقر على روابط التنقل العلوي */
 navLinks.forEach(function (link) {
     link.addEventListener('click', function (e) {
-        if (!link.dataset.category) return;
-        e.preventDefault();
-        filterCategory(link.dataset.category);
-        productsGrid.scrollIntoView({ behavior: 'smooth' });
+        updateNavLinks(null);
+        link.classList.add('nav-link-active');
+
+        if (link.dataset.category) {
+            e.preventDefault();
+            filterCategory(link.dataset.category, true);
+            productsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
     });
 });
 
-/* زر "الكل" في قسم الفلاتر */
-var categoryAllBtn = document.querySelector('.category-btn[data-category="الكل"]');
-if (categoryAllBtn) {
-    categoryAllBtn.addEventListener('click', function () {
-        filterCategory('الكل');
+/* أزرار الفئات في قسم الفلاتر */
+document.querySelectorAll('.category-btn').forEach(function (button) {
+    button.addEventListener('click', function () {
+        filterCategory(button.dataset.category, false);
     });
-}
+});
 
 applyFilters();
-updateNavLinks('الكل');
+updateNavLinks(null);
 
 /* =========================================================
    البحث والتصفية
@@ -273,6 +314,17 @@ function applyFilters() {
 function sortProducts(list) {
     var sort = sortSelect.value;
 
+    if (sort === 'default') {
+        list.sort(function (a, b) {
+            var availabilityDifference = Number(!a.stock) - Number(!b.stock);
+            if (availabilityDifference !== 0) return availabilityDifference;
+
+            var categoryDifference = (categoryPriority[a.category] || 99) - (categoryPriority[b.category] || 99);
+            if (categoryDifference !== 0) return categoryDifference;
+
+            return a.id - b.id;
+        });
+    }
     if (sort === 'name') {
         list.sort(function (a, b) { return a.name.localeCompare(b.name, 'ar'); });
     }
@@ -302,7 +354,7 @@ function renderProducts(list) {
 
     noResults.classList.add('hidden');
 
-    list.forEach(function (product) {
+    list.forEach(function (product, index) {
         var isOutOfStock = product.stock === 0 || product.stock === undefined;
 
         var card = document.createElement('div');
@@ -312,24 +364,34 @@ function renderProducts(list) {
         imageWrapper.className = 'product-image-wrapper mb-4';
 
         var img = document.createElement('img');
-        img.src = product.image || '';
+        var originalImage = product.image || '';
+        img.src = 'images/optimized/product-' + product.id + '.webp';
         img.alt = product.name || '';
-        img.loading = 'lazy';
+        img.width = 600;
+        img.height = 450;
+        img.loading = index < 4 ? 'eager' : 'lazy';
+        if (index < 4) img.fetchPriority = 'high';
         img.decoding = 'async';
         img.className = 'product-image w-full h-full rounded-xl';
+        img.addEventListener('error', function handleImageError() {
+            if (img.src.indexOf('/optimized/') !== -1 && originalImage) {
+                img.src = originalImage;
+                return;
+            }
+            img.removeEventListener('error', handleImageError);
+            img.src = productImage(product.name, product.category);
+        });
         imageWrapper.appendChild(img);
 
-        if (isOutOfStock) {
-            var badge = document.createElement('span');
-            badge.className = 'product-badge badge-out-of-stock';
-            badge.textContent = 'منتهية';
-            imageWrapper.appendChild(badge);
-        }
+        var badge = document.createElement('span');
+        badge.className = 'product-badge ' + (isOutOfStock ? 'badge-out-of-stock' : 'badge-in-stock');
+        badge.textContent = isOutOfStock ? 'منتهية' : 'متوفر';
+        imageWrapper.appendChild(badge);
 
         card.appendChild(imageWrapper);
 
         var categoryLabel = document.createElement('span');
-        categoryLabel.className = 'inline-block text-xs font-bold bg-blue-50 text-blue-700 px-3 py-1 rounded-full mb-2';
+        categoryLabel.className = 'inline-block text-xs font-bold bg-sage text-pine px-3 py-1 rounded-full mb-2';
         categoryLabel.textContent = product.category || '';
         card.appendChild(categoryLabel);
 
@@ -348,7 +410,7 @@ function renderProducts(list) {
 
         var priceBox = document.createElement('div');
         var priceEl = document.createElement('span');
-        priceEl.className = 'text-xl font-bold text-blue-700';
+        priceEl.className = 'product-price text-xl font-bold text-pine';
         priceEl.textContent = String(product.price);
         var currencyEl = document.createElement('span');
         currencyEl.className = 'text-sm text-gray-500';
@@ -359,7 +421,7 @@ function renderProducts(list) {
 
         var addBtn = document.createElement('button');
         addBtn.type = 'button';
-        addBtn.className = 'bg-blue-700 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-800 transition-colors';
+        addBtn.className = 'bg-gold text-white px-4 py-2 rounded-lg text-sm hover:bg-[#A91F26] transition-colors';
         addBtn.textContent = isOutOfStock ? 'منتهية' : 'أضف للسلة';
 
         if (isOutOfStock) {
@@ -398,6 +460,7 @@ function sanitizeCart(raw) {
     products.forEach(function (p) { validIds[p.id] = p; });
 
     var clean = [];
+    var cleanById = {};
     raw.forEach(function (item) {
         if (!item || typeof item !== 'object') return;
 
@@ -410,13 +473,29 @@ function sanitizeCart(raw) {
         if (product.stock === 0) return;
         if (qty > product.stock) qty = product.stock;
 
-        clean.push({ id: product.id, qty: qty });
+        if (cleanById[product.id]) {
+            cleanById[product.id].qty = Math.min(product.stock, cleanById[product.id].qty + qty);
+            return;
+        }
+
+        var cleanItem = { id: product.id, qty: qty };
+        cleanById[product.id] = cleanItem;
+        clean.push(cleanItem);
     });
 
     return clean;
 }
 
-var cart = sanitizeCart(JSON.parse(storageGet('cart') || '[]'));
+function loadStoredCart() {
+    try {
+        return JSON.parse(storageGet('cart') || '[]');
+    } catch (error) {
+        storageSet('cart', '[]');
+        return [];
+    }
+}
+
+var cart = sanitizeCart(loadStoredCart());
 
 function saveCart() {
     storageSet('cart', JSON.stringify(cart));
@@ -427,6 +506,11 @@ function updateCartCount() {
     var count = cart.reduce(function (sum, item) { return sum + item.qty; }, 0);
     var el = document.getElementById('cartCount');
     if (el) el.textContent = String(count);
+    var button = document.getElementById('cartButton');
+    if (button) {
+        button.classList.toggle('cart-has-items', count > 0);
+        button.setAttribute('aria-label', count > 0 ? 'السلة، تحتوي على ' + count + ' منتج' : 'السلة فارغة');
+    }
 }
 
 function addToCart(productId) {
@@ -450,25 +534,456 @@ function addToCart(productId) {
 
 function openCart() {
     cart = sanitizeCart(cart);
+    saveCart();
 
     if (cart.length === 0) {
         showToast('السلة فارغة');
         return;
     }
 
-    var msg = 'السلام عليكم، طلباتي:\n\n';
+    renderCartDialog();
+}
+
+function changeCartQuantity(productId, change) {
+    var item = cart.find(function (entry) { return entry.id === productId; });
+    var product = products.find(function (entry) { return entry.id === productId; });
+    if (!item || !product) return;
+
+    item.qty = Math.max(1, Math.min(product.stock, item.qty + change));
+    saveCart();
+    renderCartDialog();
+}
+
+function removeFromCart(productId) {
+    cart = cart.filter(function (item) { return item.id !== productId; });
+    saveCart();
+
+    if (cart.length === 0) {
+        closeCartDialog();
+        showToast('تم حذف جميع المنتجات من السلة');
+        return;
+    }
+
+    renderCartDialog();
+}
+
+function closeCartDialog() {
+    var dialog = document.getElementById('cartDialog');
+    if (dialog) dialog.remove();
+}
+
+function normalizePhone(value) {
+    return String(value || '').replace(/[^0-9+]/g, '').slice(0, 16);
+}
+
+function sanitizeMessageText(value, maxLength) {
+    return String(value || '')
+        .replace(/[\u0000-\u001f\u007f-\u009f\u2028\u2029]/g, ' ')
+        .replace(/[\u202a-\u202e\u2066-\u2069]/g, '')
+        .replace(/[*_~`]/g, '')
+        .replace(/إجمالي\s+الطلب|تفاصيل\s+الطلب|بيانات\s+العميل/gi, '')
+        .replace(/[•━=|]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .slice(0, maxLength);
+}
+
+function readOrderDetails() {
+    var branchSelect = document.getElementById('cartBranchSelect');
+    var nameInput = document.getElementById('customerName');
+    var phoneInput = document.getElementById('customerPhone');
+    var fulfillmentSelect = document.getElementById('fulfillmentMethod');
+    var addressInput = document.getElementById('deliveryAddress');
+
+    return {
+        branch: branchSelect ? branchSelect.value : '',
+        name: nameInput ? nameInput.value.trim() : '',
+        phone: phoneInput ? normalizePhone(phoneInput.value) : '',
+        fulfillment: fulfillmentSelect ? fulfillmentSelect.value : 'pickup',
+        address: addressInput ? addressInput.value.trim() : ''
+    };
+}
+
+function validateOrderDetails(details) {
+    if (details.name.length < 2) return { message: 'اكتب اسم العميل', field: 'customerName' };
+    var phoneDigits = details.phone.replace(/\D/g, '');
+    if (phoneDigits.length < 9 || phoneDigits.length > 15) {
+        return { message: 'اكتب رقم جوال صحيح', field: 'customerPhone' };
+    }
+    if (CONFIG.BRANCHES.indexOf(details.branch) === -1) {
+        return { message: 'اختر الفرع أولًا', field: 'cartBranchSelect' };
+    }
+    if (details.fulfillment !== 'pickup' && details.fulfillment !== 'delivery') {
+        return { message: 'اختر طريقة الاستلام', field: 'fulfillmentMethod' };
+    }
+    if (details.fulfillment === 'delivery' && details.address.length < 5) {
+        return { message: 'اكتب عنوان التوصيل بوضوح', field: 'deliveryAddress' };
+    }
+    return null;
+}
+
+function saveOrderDetails(details) {
+    storageSet('customerName', details.name);
+    storageSet('customerPhone', details.phone);
+    storageSet('preferredBranch', details.branch);
+    storageSet('fulfillmentMethod', details.fulfillment);
+    storageSet('deliveryAddress', details.address);
+}
+
+function cartTotal() {
+    return cart.reduce(function (sum, item) {
+        var product = products.find(function (entry) { return entry.id === item.id; });
+        return product ? sum + (product.price * item.qty) : sum;
+    }, 0);
+}
+
+function buildWhatsAppMessage(details) {
+    var safeName = sanitizeMessageText(details.name, 60);
+    var safePhone = normalizePhone(details.phone);
+    var safeBranch = sanitizeMessageText(details.branch, 40);
+    var safeAddress = sanitizeMessageText(details.address, 180);
+    var msg = 'السلام عليكم ورحمة الله وبركاته\n\n';
+    msg += '*طلب جديد | ركن العمارية*\n\n';
+    msg += '*بيانات العميل*\n';
+    msg += '• الاسم: ' + safeName + '\n';
+    msg += '• الجوال: ' + safePhone + '\n';
+    msg += '• الفرع: ' + safeBranch + '\n';
+    msg += '• الاستلام: ' + (details.fulfillment === 'delivery' ? 'توصيل' : 'استلام من الفرع') + '\n';
+    if (details.fulfillment === 'delivery') msg += '• العنوان: ' + safeAddress + '\n';
+    msg += '\n━━━━━━━━━━━━\n';
+    msg += '*تفاصيل الطلب*\n\n';
+    var total = 0;
+
+    cart.forEach(function (item, index) {
+        var product = products.find(function (p) { return p.id === item.id; });
+        if (!product) return;
+        var lineTotal = product.price * item.qty;
+        msg += (index + 1) + '. *' + sanitizeMessageText(product.name, 80) + '* — ' + sanitizeMessageText(product.weight, 40) + '\n';
+        msg += '   ' + item.qty + ' × ' + product.price + ' ريال = *' + lineTotal + ' ريال*\n\n';
+        total += lineTotal;
+    });
+
+    msg += '━━━━━━━━━━━━\n';
+    msg += '*إجمالي الطلب: ' + total + ' ريال*\n\n';
+    msg += '_الأسعار والتوفر تخضع لتأكيد الفرع._\n\n';
+    msg += 'شكرًا لكم.';
+    return msg;
+}
+
+function sendCartToWhatsApp(details) {
+    window.open(getWhatsAppUrl(details), '_blank', 'noopener,noreferrer');
+}
+
+function getWhatsAppUrl(details) {
+    var phone = CONFIG.BRANCH_PHONES[details.branch] || CONFIG.WA_PHONE;
+    var msg = buildWhatsAppMessage(details);
+    return 'https://wa.me/' + phone + '?text=' + encodeURIComponent(msg);
+}
+
+function addReviewLine(container, label, value) {
+    var row = document.createElement('div');
+    row.className = 'order-review-line';
+    var labelEl = document.createElement('span');
+    labelEl.textContent = label;
+    var valueEl = document.createElement('strong');
+    valueEl.textContent = value;
+    row.appendChild(labelEl);
+    row.appendChild(valueEl);
+    container.appendChild(row);
+}
+
+function renderOrderReview(details) {
+    var dialog = document.getElementById('cartDialog');
+    var panel = dialog ? dialog.querySelector('.cart-panel') : null;
+    if (!panel) return;
+    panel.textContent = '';
+
+    var header = document.createElement('div');
+    header.className = 'cart-panel-header';
+    var title = document.createElement('h2');
+    title.id = 'cartDialogTitle';
+    title.textContent = 'تأكيد الطلب';
+    var closeButton = document.createElement('button');
+    closeButton.type = 'button';
+    closeButton.className = 'cart-close';
+    closeButton.setAttribute('aria-label', 'إغلاق السلة');
+    closeButton.textContent = '×';
+    closeButton.addEventListener('click', closeCartDialog);
+    header.appendChild(title);
+    header.appendChild(closeButton);
+    panel.appendChild(header);
+
+    var review = document.createElement('div');
+    review.className = 'order-review';
+    var hint = document.createElement('p');
+    hint.className = 'order-review-hint';
+    hint.textContent = 'راجع البيانات قبل فتح واتساب.';
+    review.appendChild(hint);
+    addReviewLine(review, 'العميل', details.name);
+    addReviewLine(review, 'الجوال', details.phone);
+    addReviewLine(review, 'الفرع', details.branch);
+    addReviewLine(review, 'الاستلام', details.fulfillment === 'delivery' ? 'توصيل' : 'استلام من الفرع');
+    if (details.fulfillment === 'delivery') addReviewLine(review, 'العنوان', details.address);
+
+    var itemsTitle = document.createElement('h3');
+    itemsTitle.textContent = 'المنتجات';
+    review.appendChild(itemsTitle);
+    cart.forEach(function (item) {
+        var product = products.find(function (entry) { return entry.id === item.id; });
+        if (!product) return;
+        addReviewLine(review, product.name, item.qty + ' × ' + product.price + ' ريال');
+    });
+    addReviewLine(review, 'الإجمالي', cartTotal() + ' ريال');
+    panel.appendChild(review);
+
+    var footer = document.createElement('div');
+    footer.className = 'cart-panel-footer review-actions';
+    var backButton = document.createElement('button');
+    backButton.type = 'button';
+    backButton.className = 'cart-back';
+    backButton.textContent = 'رجوع للتعديل';
+    backButton.addEventListener('click', renderCartDialog);
+    var confirmButton = document.createElement('a');
+    confirmButton.className = 'cart-send';
+    confirmButton.href = getWhatsAppUrl(details);
+    confirmButton.target = '_blank';
+    confirmButton.rel = 'noopener noreferrer';
+    confirmButton.textContent = 'تأكيد وفتح واتساب';
+    confirmButton.addEventListener('click', function () {
+        cart = [];
+        saveCart();
+        closeCartDialog();
+        showToast('تم فتح واتساب وإفراغ السلة');
+    });
+    footer.appendChild(backButton);
+    footer.appendChild(confirmButton);
+    panel.appendChild(footer);
+    confirmButton.focus();
+}
+
+function reviewOrderBeforeSending() {
+    var details = readOrderDetails();
+    var error = validateOrderDetails(details);
+    if (error) {
+        showToast(error.message);
+        var field = document.getElementById(error.field);
+        if (field) field.focus();
+        return;
+    }
+    saveOrderDetails(details);
+    renderOrderReview(details);
+}
+
+function createCartField(labelText, control) {
+    var field = document.createElement('div');
+    field.className = 'cart-form-field';
+    var label = document.createElement('label');
+    label.setAttribute('for', control.id);
+    label.textContent = labelText;
+    field.appendChild(label);
+    field.appendChild(control);
+    return field;
+}
+
+function renderCartDialog() {
+    closeCartDialog();
+
+    var dialog = document.createElement('div');
+    dialog.id = 'cartDialog';
+    dialog.className = 'cart-dialog';
+    dialog.setAttribute('role', 'dialog');
+    dialog.setAttribute('aria-modal', 'true');
+    dialog.setAttribute('aria-labelledby', 'cartDialogTitle');
+    dialog.addEventListener('click', function (event) {
+        if (event.target === dialog) closeCartDialog();
+    });
+    dialog.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') closeCartDialog();
+    });
+
+    var panel = document.createElement('div');
+    panel.className = 'cart-panel';
+
+    var header = document.createElement('div');
+    header.className = 'cart-panel-header';
+    var title = document.createElement('h2');
+    title.id = 'cartDialogTitle';
+    title.textContent = 'راجع طلبك';
+    var closeButton = document.createElement('button');
+    closeButton.type = 'button';
+    closeButton.className = 'cart-close';
+    closeButton.setAttribute('aria-label', 'إغلاق السلة');
+    closeButton.textContent = '×';
+    closeButton.addEventListener('click', closeCartDialog);
+    header.appendChild(title);
+    header.appendChild(closeButton);
+    panel.appendChild(header);
+
+    var items = document.createElement('div');
+    items.className = 'cart-items';
     var total = 0;
 
     cart.forEach(function (item) {
-        var product = products.find(function (p) { return p.id === item.id; });
+        var product = products.find(function (entry) { return entry.id === item.id; });
         if (!product) return;
-        msg += product.name + ' × ' + item.qty + ' = ' + (product.price * item.qty) + ' ريال\n';
         total += product.price * item.qty;
+
+        var row = document.createElement('div');
+        row.className = 'cart-item';
+        var details = document.createElement('div');
+        details.className = 'cart-item-details';
+        var name = document.createElement('strong');
+        name.textContent = product.name;
+        var price = document.createElement('span');
+        price.textContent = product.price + ' ريال — ' + product.weight;
+        details.appendChild(name);
+        details.appendChild(price);
+
+        var controls = document.createElement('div');
+        controls.className = 'cart-item-controls';
+        var increase = document.createElement('button');
+        increase.type = 'button';
+        increase.className = 'quantity-button';
+        increase.textContent = '+';
+        increase.setAttribute('aria-label', 'زيادة كمية ' + product.name);
+        increase.disabled = item.qty >= product.stock;
+        increase.addEventListener('click', function () { changeCartQuantity(product.id, 1); });
+        var quantity = document.createElement('span');
+        quantity.className = 'quantity-value';
+        quantity.textContent = String(item.qty);
+        var decrease = document.createElement('button');
+        decrease.type = 'button';
+        decrease.className = 'quantity-button';
+        decrease.textContent = '−';
+        decrease.setAttribute('aria-label', 'تقليل كمية ' + product.name);
+        decrease.addEventListener('click', function () { changeCartQuantity(product.id, -1); });
+        var remove = document.createElement('button');
+        remove.type = 'button';
+        remove.className = 'cart-remove';
+        remove.textContent = 'حذف';
+        remove.addEventListener('click', function () { removeFromCart(product.id); });
+        controls.appendChild(increase);
+        controls.appendChild(quantity);
+        controls.appendChild(decrease);
+        controls.appendChild(remove);
+        row.appendChild(details);
+        row.appendChild(controls);
+        items.appendChild(row);
     });
+    panel.appendChild(items);
 
-    msg += '\nالمجموع: ' + total + ' ريال';
+    var customerSection = document.createElement('section');
+    customerSection.className = 'cart-customer';
+    var customerTitle = document.createElement('h3');
+    customerTitle.textContent = 'بيانات الطلب';
+    customerSection.appendChild(customerTitle);
 
-    window.location.href = 'https://wa.me/' + CONFIG.WA_PHONE + '?text=' + encodeURIComponent(msg);
+    var customerName = document.createElement('input');
+    customerName.id = 'customerName';
+    customerName.type = 'text';
+    customerName.autocomplete = 'name';
+    customerName.maxLength = 60;
+    customerName.placeholder = 'مثال: محمد أحمد';
+    customerName.value = storageGet('customerName') || '';
+    customerName.addEventListener('input', function () {
+        storageSet('customerName', customerName.value);
+    });
+    customerSection.appendChild(createCartField('اسم العميل', customerName));
+
+    var customerPhone = document.createElement('input');
+    customerPhone.id = 'customerPhone';
+    customerPhone.type = 'tel';
+    customerPhone.inputMode = 'tel';
+    customerPhone.autocomplete = 'tel';
+    customerPhone.maxLength = 16;
+    customerPhone.placeholder = '05xxxxxxxx';
+    customerPhone.value = storageGet('customerPhone') || '';
+    customerPhone.addEventListener('input', function () {
+        customerPhone.value = normalizePhone(customerPhone.value);
+        storageSet('customerPhone', customerPhone.value);
+    });
+    customerSection.appendChild(createCartField('رقم الجوال', customerPhone));
+
+    var fulfillment = document.createElement('select');
+    fulfillment.id = 'fulfillmentMethod';
+    var pickupOption = document.createElement('option');
+    pickupOption.value = 'pickup';
+    pickupOption.textContent = 'استلام من الفرع';
+    var deliveryOption = document.createElement('option');
+    deliveryOption.value = 'delivery';
+    deliveryOption.textContent = 'توصيل';
+    fulfillment.appendChild(pickupOption);
+    fulfillment.appendChild(deliveryOption);
+    var savedFulfillment = storageGet('fulfillmentMethod');
+    fulfillment.value = savedFulfillment === 'delivery' ? 'delivery' : 'pickup';
+    customerSection.appendChild(createCartField('طريقة الاستلام', fulfillment));
+
+    var deliveryAddress = document.createElement('textarea');
+    deliveryAddress.id = 'deliveryAddress';
+    deliveryAddress.rows = 2;
+    deliveryAddress.maxLength = 180;
+    deliveryAddress.placeholder = 'المدينة، الحي، الشارع وأقرب معلم';
+    deliveryAddress.value = storageGet('deliveryAddress') || '';
+    var addressField = createCartField('عنوان التوصيل', deliveryAddress);
+    addressField.hidden = fulfillment.value !== 'delivery';
+    fulfillment.addEventListener('change', function () {
+        storageSet('fulfillmentMethod', fulfillment.value);
+        addressField.hidden = fulfillment.value !== 'delivery';
+        if (fulfillment.value === 'delivery') deliveryAddress.focus();
+    });
+    deliveryAddress.addEventListener('input', function () {
+        storageSet('deliveryAddress', deliveryAddress.value);
+    });
+    customerSection.appendChild(addressField);
+    panel.appendChild(customerSection);
+
+    var branchField = document.createElement('div');
+    branchField.className = 'cart-branch';
+    var branchLabel = document.createElement('label');
+    branchLabel.setAttribute('for', 'cartBranchSelect');
+    branchLabel.textContent = 'اختر الفرع المطلوب';
+    var branchSelect = document.createElement('select');
+    branchSelect.id = 'cartBranchSelect';
+    branchSelect.required = true;
+    var placeholder = document.createElement('option');
+    placeholder.value = '';
+    placeholder.textContent = 'حدد الفرع قبل إرسال الطلب';
+    branchSelect.appendChild(placeholder);
+    CONFIG.BRANCHES.forEach(function (branch) {
+        var option = document.createElement('option');
+        option.value = branch;
+        option.textContent = branch;
+        branchSelect.appendChild(option);
+    });
+    var savedBranch = storageGet('preferredBranch');
+    if (CONFIG.BRANCHES.indexOf(savedBranch) !== -1) branchSelect.value = savedBranch;
+    var branchHint = document.createElement('small');
+    branchHint.textContent = 'سيُكتب اسم الفرع داخل رسالة واتساب.';
+    branchField.appendChild(branchLabel);
+    branchField.appendChild(branchSelect);
+    branchField.appendChild(branchHint);
+    panel.appendChild(branchField);
+
+    var footer = document.createElement('div');
+    footer.className = 'cart-panel-footer';
+    var totalLine = document.createElement('div');
+    totalLine.className = 'cart-total';
+    totalLine.textContent = 'المجموع: ' + total + ' ريال';
+    var sendButton = document.createElement('button');
+    sendButton.type = 'button';
+    sendButton.className = 'cart-send';
+    sendButton.textContent = 'مراجعة الطلب';
+    branchSelect.addEventListener('change', function () {
+        if (branchSelect.value) storageSet('preferredBranch', branchSelect.value);
+    });
+    sendButton.addEventListener('click', reviewOrderBeforeSending);
+    footer.appendChild(totalLine);
+    footer.appendChild(sendButton);
+    panel.appendChild(footer);
+
+    dialog.appendChild(panel);
+    document.body.appendChild(dialog);
+    closeButton.focus();
 }
 
 var cartButton = document.getElementById('cartButton');
@@ -529,9 +1044,3 @@ sortSelect.addEventListener('change', applyFilters);
         }
     }, { passive: true });
 })();
-
-/* =========================================================
-   التشغيل الأول
-   ========================================================= */
-
-renderProducts(products);

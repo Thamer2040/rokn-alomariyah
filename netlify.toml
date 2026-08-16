@@ -1,7 +1,8 @@
 # إعدادات النشر على Netlify مع ترويسات أمان صارمة
 
 [build]
-  publish = "."
+  command = "npm run build"
+  publish = "public"
 
 [[headers]]
   for = "/*"

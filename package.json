@@ -1,0 +1,14 @@
+{
+  "scripts": {
+    "build": "npm run build:css && node scripts/prepare-site.js",
+    "build:css": "tailwindcss -i ./tailwind.css -o ./tailwind-output.css --minify",
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "@tailwindcss/cli": "^4.3.3",
+    "express": "^5.2.1",
+    "jsdom": "^30.0.1",
+    "tailwindcss": "^4.3.3"
+  }
+}

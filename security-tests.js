@@ -42,10 +42,10 @@ function runTests() {
         { id: 1, qty: 7.9 }
     ]);
     assert(
-        '3) كميات غير صالحة تُصحّح لعدد صحيح >= 1',
-        badQty.length === 4 && badQty.every(function (i) {
-            return i.qty >= 1 && Number.isInteger(i.qty);
-        })
+        '3) الكميات غير الصالحة تُصحّح والمنتجات المكررة تُدمج',
+        badQty.length === 1 &&
+        badQty[0].qty === 10 &&
+        Number.isInteger(badQty[0].qty)
     );
 
     /* ---------- 4) منتج بمخزون صفر ---------- */

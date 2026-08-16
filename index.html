@@ -1,401 +1,108 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta name="theme-color" content="#1D4078">
     <title>ركن العمارية</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/png" href="images/شعار ركن العمارية 2.png">
+    <link rel="stylesheet" href="tailwind-output.css">
     <script src="app.js" defer></script>
 </head>
-
 <body>
-
-<!-- =========================================================
-     HEADER - تنقل متجر كامل
-     ========================================================= -->
-<header class="store-header sticky top-0 z-50 shadow-lg">
-    <div class="max-w-7xl mx-auto px-4">
-
-        <!-- الصف العلوي: الشعار + بحث + أيقونات -->
-        <div class="flex flex-col lg:flex-row items-center justify-between gap-4 py-3">
-
-            <!-- اسم المتجر فقط -->
-            <div class="logo-area flex-shrink-0">
-                <a href="#" class="flex items-center gap-3" aria-label="الرئيسية">
-                    <div>
-                        <div class="store-title">ركن العمارية</div>
-                        <div class="store-subtitle">للمجمدات والمواد الغذائية</div>
-                    </div>
+<div id="redesignRoot" class="min-h-screen bg-cream text-ink antialiased">
+    <header class="sticky top-0 z-50 border-b border-white/10 bg-ink text-white shadow-lg shadow-ink/15">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6">
+            <div class="flex items-center justify-between gap-3 py-3 sm:gap-4">
+                <a href="#" class="brand-logo" aria-label="ركن العمارية - الرئيسية">
+                    <img src="images/شعار ركن العمارية 2.png" alt="ركن العمارية للمجمدات والمواد الغذائية" width="1024" height="1024">
                 </a>
-            </div>
-
-            <!-- البحث -->
-            <div class="search-box w-full lg:w-1/2 lg:mx-auto">
-                <input
-                    id="searchInput"
-                    type="text"
-                    placeholder="ابحث عن منتج... (مثلاً: دجاج، بطاطس، بيبسي)"
-                    autocomplete="off"
-                    aria-label="البحث عن منتجات"
-                >
-            </div>
-
-            <!-- أيقونات: سلة + وضع ليلي + قائمة -->
-            <div class="header-actions flex-shrink-0">
-                <!-- السلة -->
-                <div class="relative">
-                    <button id="cartButton" class="icon-btn" aria-label="سلة المشتريات">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="9" cy="21" r="1"></circle>
-                            <circle cx="20" cy="21" r="1"></circle>
-                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                        </svg>
-                        <span class="cart-count" id="cartCount">0</span>
+                <input id="searchInput" type="search" autocomplete="off" placeholder="ابحث عن منتج أو فئة..." aria-label="البحث عن المنتجات" class="w-full max-w-md rounded-full border border-white/15 bg-white/10 px-4 py-2.5 text-sm text-white placeholder:text-sage/70 outline-none transition focus:border-gold focus:bg-white/15 sm:px-5">
+                <div class="flex items-center gap-2">
+                    <label class="grid h-10 w-10 shrink-0 cursor-pointer place-items-center rounded-full border border-white/15 text-sage transition hover:border-white/30 hover:bg-white/10" aria-label="تفعيل الوضع الليلي" title="تفعيل الوضع الليلي">
+                        <input type="checkbox" id="themeToggle" class="sr-only">
+                        <svg class="sun-icon hidden h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2"/></svg>
+                        <svg class="moon-icon h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
+                    </label>
+                    <button id="cartButton" type="button" class="cart-button relative inline-flex h-11 items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 text-sm font-bold text-white shadow-lg shadow-black/10 transition hover:-translate-y-0.5 hover:bg-white/15">
+                        <span>السلة</span>
+                        <span id="cartCount" class="grid h-5 min-w-5 place-items-center rounded-full bg-white/15 px-1 text-[11px] text-white">0</span>
                     </button>
                 </div>
-
-                <!-- الوضع الليلي للجوال -->
-                <label class="icon-btn lg:hidden" aria-label="الوضع الليلي">
-                    <input type="checkbox" id="themeToggleMobile" class="sr-only">
-                    <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="5"></circle>
-                        <line x1="12" y1="1" x2="12" y2="3"></line>
-                        <line x1="12" y1="21" x2="12" y2="23"></line>
-                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                        <line x1="1" y1="12" x2="3" y2="12"></line>
-                        <line x1="21" y1="12" x2="23" y2="12"></line>
-                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                    </svg>
-                    <svg class="moon-icon hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                    </svg>
-                </label>
-
-                <!-- الوضع الليلي للسطح المكتب -->
-                <label class="hidden lg:flex items-center gap-2 cursor-pointer" aria-label="الوضع الليلي">
-                    <input type="checkbox" id="themeToggle" class="sr-only">
-                    <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="5"></circle>
-                        <line x1="12" y1="1" x2="12" y2="3"></line>
-                        <line x1="12" y1="21" x2="12" y2="23"></line>
-                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                        <line x1="1" y1="12" x2="3" y2="12"></line>
-                        <line x1="21" y1="12" x2="23" y2="12"></line>
-                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                    </svg>
-                    <svg class="moon-icon hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                    </svg>
-                    <span class="text-sm font-medium text-white hidden sm:inline">الوضع الليلي</span>
-                </label>
             </div>
+            <nav class="nav-menu flex gap-2 overflow-x-auto border-t border-white/10 py-2.5 text-sm font-bold text-sage" aria-label="التنقل الرئيسي">
+                <a href="#productsNew" class="nav-link whitespace-nowrap rounded-full px-3 py-1.5 transition" data-category="الكل">المنتجات</a>
+                <a href="#locationsNew" class="nav-link whitespace-nowrap rounded-full px-3 py-1.5 transition">فروعنا</a>
+            </nav>
         </div>
+    </header>
 
-        <!-- قائمة التنقل الرئيسية -->
-        <nav class="nav-menu border-t border-blue-900" aria-label="أقسام المتجر">
-            <div class="flex flex-wrap gap-2 py-2 px-2 overflow-x-auto scrollbar-hide">
-                <a href="#" class="nav-link" data-category="الكل">الرئيسية</a>
-                <a href="#locations" class="nav-link">مواقعنا</a>
-            </div>
-        </nav>
-    </div>
-</header>
-
-
-<!-- =========================================================
-     INTRO
-     ========================================================= -->
-<section class="bg-white border-b transition-colors duration-200">
-
-    <div class="max-w-7xl mx-auto px-4 py-8">
-
-        <h2 class="text-2xl sm:text-3xl font-bold mb-2">
-            منتجات المجمدات للمطاعم
-        </h2>
-
-        <p class="text-gray-500 text-sm sm:text-base">
-            تشكيلة واسعة من المنتجات المجمدة والمواد الغذائية
-            المناسبة للمطاعم والمطابخ والكافيهات.
-        </p>
-
-    </div>
-
-</section>
-
-
-<!-- =========================================================
-     CATEGORIES
-     ========================================================= -->
-<section class="max-w-7xl mx-auto px-4 py-6">
-
-    <div
-        id="categories"
-        class="flex flex-nowrap overflow-x-auto
-               pb-2 sm:flex-wrap sm:pb-0 gap-2 scrollbar-hide"
-    >
-
-        <button
-            data-category="الكل"
-            class="category-btn category-active
-                   px-4 py-2 rounded-full border
-                   bg-white whitespace-nowrap
-                   transition-colors"
-        >
-            الكل
-        </button>
-
-        <button
-            data-category="دجاج"
-            class="category-btn
-                   px-4 py-2 rounded-full border
-                   bg-white whitespace-nowrap
-                   transition-colors"
-        >
-            دجاج
-        </button>
-
-        <button
-            data-category="لحوم"
-            class="category-btn
-                   px-4 py-2 rounded-full border
-                   bg-white whitespace-nowrap
-                   transition-colors"
-        >
-            لحوم
-        </button>
-
-        <button
-            data-category="بحريات"
-            class="category-btn
-                   px-4 py-2 rounded-full border
-                   bg-white whitespace-nowrap
-                   transition-colors"
-        >
-            بحريات
-        </button>
-
-        <button
-            data-category="بطاطس ومقبلات"
-            class="category-btn
-                   px-4 py-2 rounded-full border
-                   bg-white whitespace-nowrap
-                   transition-colors"
-        >
-            بطاطس ومقبلات
-        </button>
-
-        <button
-            data-category="خضار وفواكه"
-            class="category-btn
-                   px-4 py-2 rounded-full border
-                   bg-white whitespace-nowrap
-                   transition-colors"
-        >
-            خضار وفواكه
-        </button>
-
-        <button
-            data-category="معجنات"
-            class="category-btn
-                   px-4 py-2 rounded-full border
-                   bg-white whitespace-nowrap
-                   transition-colors"
-        >
-            معجنات
-        </button>
-
-        <button
-            data-category="مواد غذائية"
-            class="category-btn
-                   px-4 py-2 rounded-full border
-                   bg-white whitespace-nowrap
-                   transition-colors"
-        >
-            مواد غذائية
-        </button>
-
-        <button
-            data-category="مشروبات"
-            class="category-btn
-                   px-4 py-2 rounded-full border
-                   bg-white whitespace-nowrap
-                   transition-colors"
-        >
-            مشروبات
-        </button>
-
-    </div>
-
-</section>
-
-
-<!-- =========================================================
-     CONTROLS
-     ========================================================= -->
-<section class="max-w-7xl mx-auto px-4 pb-4">
-
-    <div
-        class="flex flex-col sm:flex-row
-               justify-between items-center gap-3"
-    >
-
-        <div
-            id="resultCount"
-            class="text-gray-500 text-sm sm:text-base
-                   w-full sm:w-auto text-right"
-        ></div>
-
-        <select
-            id="sortSelect"
-            class="w-full sm:w-auto
-                   border rounded-lg px-4 py-2
-                   bg-white outline-none
-                   focus:ring-2 focus:ring-blue-300
-                   transition-colors"
-        >
-            <option value="default">الترتيب الافتراضي</option>
-            <option value="name">الاسم</option>
-            <option value="priceLow">السعر من الأقل</option>
-            <option value="priceHigh">السعر من الأعلى</option>
-        </select>
-
-    </div>
-
-</section>
-
-
-<!-- =========================================================
-     PRODUCTS
-     ========================================================= -->
-<main class="max-w-7xl mx-auto px-4 pb-16">
-
-    <div
-        id="productsGrid"
-        class="grid grid-cols-2 sm:grid-cols-3
-               md:grid-cols-3 lg:grid-cols-4 gap-4"
-    ></div>
-
-    <div
-        id="noResults"
-        class="hidden text-center py-20
-               text-gray-500 text-xl"
-    >
-        لم يتم العثور على المنتج.
-    </div>
-
-</main>
-
-
-<!-- =========================================================
-     LOCATIONS - مواقعنا
-     ========================================================= -->
-<section id="locations" class="bg-white border-t border-gray-200 py-8">
-
-    <div class="max-w-7xl mx-auto px-4">
-
-        <h2 class="text-2xl sm:text-3xl font-bold mb-2">مواقعنا</h2>
-
-        <p class="text-gray-500 text-sm sm:text-base mb-4">
-            زورونا في أي فرع من فروعنا أو اطلبوا عبر الواتساب.
-        </p>
-
-        <div id="locationsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-            <div class="location-card">
-                <div class="location-info">
-                    <div class="location-name">الساده - الجرده</div>
-                    <a class="location-link"
-                       href="https://maps.app.goo.gl/b1JHpFe4WZKFVZML7"
-                       target="_blank" rel="noopener noreferrer">
-                        افتح في خرائط جوجل
-                    </a>
+    <main>
+        <section class="hero-section overflow-hidden bg-ink text-white">
+            <div class="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:py-20">
+                <div class="max-w-3xl">
+                    <p class="mb-4 inline-flex rounded-full border border-gold/40 bg-gold/10 px-3 py-1 text-xs font-bold text-white">توريد موثوق للمطاعم والمطابخ</p>
+                    <h1 class="text-4xl leading-[1.18] font-black tracking-tight sm:text-6xl">كل ما يحتاجه <span class="text-gold">مطبخك</span> في مكان واحد.</h1>
+                    <p class="mt-6 max-w-2xl leading-8 text-sage">مجمدات ومواد غذائية مختارة بعناية لتخدم المطاعم والمطابخ بجودة ثابتة.</p>
+                    <a href="#productsNew" class="mt-8 inline-flex rounded-full bg-gold px-6 py-3 font-bold text-white shadow-lg shadow-black/15 transition hover:-translate-y-0.5 hover:bg-[#A91F26]">تصفح المنتجات</a>
                 </div>
-                <iframe
-                    class="location-map"
-                    src="https://maps.google.com/maps?q=26.3198565,43.9746397&amp;z=15&amp;output=embed"
-                    loading="lazy"
-                    title="خريطة فرع الساده - الجرده"
-                ></iframe>
             </div>
+        </section>
 
-            <div class="location-card">
-                <div class="location-info">
-                    <div class="location-name">الفرع الرئيسي</div>
-                    <a class="location-link"
-                       href="https://maps.app.goo.gl/GehQPUbYis94xRWe9"
-                       target="_blank" rel="noopener noreferrer">
-                        افتح في خرائط جوجل
-                    </a>
+        <section id="productsNew" class="mx-auto max-w-7xl px-4 py-12 sm:px-6">
+            <div class="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
+                <div>
+                    <p class="text-sm font-bold text-pine">التشكيلة</p>
+                    <h2 class="mt-1 text-3xl font-black tracking-tight sm:text-4xl">اختر ما يناسب مطبخك</h2>
                 </div>
-                <iframe
-                    class="location-map"
-                    src="https://maps.google.com/maps?q=26.2954426,43.9888738&amp;z=15&amp;output=embed"
-                    loading="lazy"
-                    title="خريطة الفرع الرئيسي"
-                ></iframe>
+                <p id="resultCount" class="text-sm text-slate-500" aria-live="polite"></p>
             </div>
+            <div id="categories" class="mt-7 flex gap-2 overflow-x-auto pb-2">
+                <button data-category="الكل" class="category-btn category-active shrink-0 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700">الكل</button>
+                <button data-category="دجاج" class="category-btn shrink-0 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700">دجاج</button>
+                <button data-category="لحوم" class="category-btn shrink-0 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700">لحوم</button>
+                <button data-category="بحريات" class="category-btn shrink-0 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700">بحريات</button>
+                <button data-category="بطاطس ومقبلات" class="category-btn shrink-0 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700">بطاطس ومقبلات</button>
+                <button data-category="خضار وفواكه" class="category-btn shrink-0 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700">خضار وفواكه</button>
+                <button data-category="معجنات" class="category-btn shrink-0 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700">معجنات</button>
+                <button data-category="مواد غذائية" class="category-btn shrink-0 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700">مواد غذائية</button>
+                <button data-category="مشروبات" class="category-btn shrink-0 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700">مشروبات</button>
+            </div>
+            <div class="mt-7 flex justify-end">
+                <label class="sr-only" for="sortSelect">ترتيب المنتجات</label>
+                <select id="sortSelect" class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 outline-none focus:border-pine">
+                    <option value="default">الترتيب الافتراضي</option>
+                    <option value="name">الاسم</option>
+                    <option value="priceLow">السعر من الأقل</option>
+                    <option value="priceHigh">السعر من الأعلى</option>
+                </select>
+            </div>
+            <div id="productsGrid" class="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4"></div>
+            <div id="noResults" class="hidden py-20 text-center text-lg text-slate-500">لم يتم العثور على المنتج. جرّب كلمة بحث أخرى.</div>
+        </section>
 
-            <div class="location-card">
-                <div class="location-info">
-                    <div class="location-name">الأفق</div>
-                    <a class="location-link"
-                       href="https://maps.app.goo.gl/sbHDXqWegTFTf2fSA"
-                       target="_blank" rel="noopener noreferrer">
-                        افتح في خرائط جوجل
-                    </a>
+        <section id="locationsNew" class="bg-sage/35 py-14">
+            <div class="mx-auto max-w-7xl px-4 sm:px-6">
+                <p class="text-sm font-bold text-pine">قريبون منكم</p>
+                <h2 class="mt-1 text-3xl font-black tracking-tight">فروع ركن العمارية</h2>
+                <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    <a class="branch-card rounded-2xl bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg" href="https://maps.app.goo.gl/GehQPUbYis94xRWe9" target="_blank" rel="noopener noreferrer"><strong class="block text-lg">الفرع الرئيسي</strong><span class="mt-5 inline-block text-sm font-bold text-pine">افتح الخريطة ←</span></a>
+                    <a class="branch-card rounded-2xl bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg" href="https://maps.app.goo.gl/b1JHpFe4WZKFVZML7" target="_blank" rel="noopener noreferrer"><strong class="block text-lg">السادة</strong><span class="mt-5 inline-block text-sm font-bold text-pine">افتح الخريطة ←</span></a>
+                    <a class="branch-card rounded-2xl bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg" href="https://maps.app.goo.gl/sbHDXqWegTFTf2fSA" target="_blank" rel="noopener noreferrer"><strong class="block text-lg">الأفق</strong><span class="mt-5 inline-block text-sm font-bold text-pine">افتح الخريطة ←</span></a>
+                    <a class="branch-card rounded-2xl bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg" href="https://maps.app.goo.gl/heH48TeL1G1HVsn97" target="_blank" rel="noopener noreferrer"><strong class="block text-lg">الرس</strong><span class="mt-5 inline-block text-sm font-bold text-pine">افتح الخريطة ←</span></a>
+                    <a class="branch-card rounded-2xl bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg" href="https://maps.app.goo.gl/72FBdwvXPvGYfM6Q6" target="_blank" rel="noopener noreferrer"><strong class="block text-lg">المدينة المنورة</strong><span class="mt-5 inline-block text-sm font-bold text-pine">افتح الخريطة ←</span></a>
                 </div>
-                <iframe
-                    class="location-map"
-                    src="https://maps.google.com/maps?q=26.3849895,43.9613369&amp;z=15&amp;output=embed"
-                    loading="lazy"
-                    title="خريطة فرع الأفق"
-                ></iframe>
             </div>
+        </section>
+    </main>
 
-            <div class="location-card">
-                <div class="location-info">
-                    <div class="location-name">الرس</div>
-                    <a class="location-link"
-                       href="https://maps.app.goo.gl/heH48TeL1G1HVsn97"
-                       target="_blank" rel="noopener noreferrer">
-                        افتح في خرائط جوجل
-                    </a>
-                </div>
-                <iframe
-                    class="location-map"
-                    src="https://maps.google.com/maps?q=25.866178,43.5143355&amp;z=15&amp;output=embed"
-                    loading="lazy"
-                    title="خريطة فرع الرس"
-                ></iframe>
-            </div>
+    <footer class="border-t border-white/10 bg-ink px-4 py-8 text-center text-sm text-sage">
+        <p>ركن العمارية للمجمدات والمواد الغذائية</p>
+    </footer>
 
-            <div class="location-card">
-                <div class="location-info">
-                    <div class="location-name">المدينة المنورة</div>
-                    <a class="location-link"
-                       href="https://maps.app.goo.gl/72FBdwvXPvGYfM6Q6"
-                       target="_blank" rel="noopener noreferrer">
-                        افتح في خرائط جوجل
-                    </a>
-                </div>
-                <iframe
-                    class="location-map"
-                    src="https://maps.google.com/maps?q=24.4651387,39.582898&amp;z=15&amp;output=embed"
-                    loading="lazy"
-                    title="خريطة فرع المدينة المنورة"
-                ></iframe>
-            </div>
-
-        </div>
-
-    </div>
-
-</section>
-
+    <a class="floating-whatsapp-new fixed bottom-5 left-5 z-40 inline-flex items-center rounded-full bg-gold px-4 py-3 text-sm font-bold text-white shadow-xl shadow-black/20 transition hover:-translate-y-1 hover:bg-[#A91F26]" href="https://wa.me/966553108707?text=%D8%A7%D9%84%D8%B3%D9%84%D8%A7%D9%85%20%D8%B9%D9%84%D9%8A%D9%83%D9%85%D8%8C%20%D8%A3%D8%B1%D8%BA%D8%A8%20%D8%A8%D8%A7%D9%84%D8%A7%D8%B3%D8%AA%D9%81%D8%B3%D8%A7%D8%B1" target="_blank" rel="noopener noreferrer">واتساب</a>
+</div>
+<noscript>يلزم تفعيل JavaScript لعرض المنتجات والسلة.</noscript>
 </body>
 </html>
