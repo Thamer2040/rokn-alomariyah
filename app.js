@@ -365,7 +365,7 @@ function renderProducts(list) {
 
         var img = document.createElement('img');
         var originalImage = product.image || '';
-        img.src = 'images/optimized/product-' + product.id + '.webp';
+        img.src = 'images/optimized/product-' + product.id + '.webp?v=20260816-3';
         img.alt = product.name || '';
         img.width = 600;
         img.height = 450;
